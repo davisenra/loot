@@ -363,7 +363,7 @@
 		<button
 			type="submit"
 			disabled={submitting}
-			class="rounded-full bg-gradient-to-r from-primary to-primary-container px-8 py-3 font-label font-semibold text-on-primary shadow-sm transition-all hover:opacity-95 hover:shadow-md disabled:opacity-50"
+			class="cursor-pointer rounded-full bg-primary px-4 py-3 font-label text-sm text-on-primary transition-colors duration-300 hover:bg-primary-container hover:text-on-primary-container disabled:cursor-not-allowed disabled:opacity-50"
 		>
 			{submitting ? 'Saving...' : isEdit ? 'Update Order' : 'Save Order'}
 		</button>
