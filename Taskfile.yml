@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+tasks:
+  setup:
+    desc: Downloads the PocketBase binary
+    dir: pocketbase
+    cmds:
+      - |
+        if [ -f pocketbase ]; then
+          echo "PocketBase binary already exists, skipping download."
+          exit 0
+        fi
+        curl -L -o /tmp/pocketbase.zip https://github.com/pocketbase/pocketbase/releases/download/v0.38.2/pocketbase_0.38.2_linux_amd64.zip
+        unzip -o /tmp/pocketbase.zip pocketbase -d .
+        rm /tmp/pocketbase.zip
+  api:
+    desc: Starts the pocketbase server
+    cmds:
+      - ./pocketbase/pocketbase serve
+  webapp:
+    desc: Starts the SvelteKit app
+    dir: webapp
+    cmds:
+      - pnpm run dev
