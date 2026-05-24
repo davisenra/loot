@@ -20,7 +20,10 @@
 
 <nav class="fixed top-0 left-0 z-40 flex h-screen w-64 flex-col bg-surface-container-low p-6">
 	<div class="mb-12">
-		<h1 class="mb-1 font-headline text-xl text-on-surface">Loot</h1>
+		<h1 class="mb-1 font-headline text-2xl font-bold text-on-surface">Loot</h1>
+		<p class="font-label text-sm text-on-surface-variant">
+			{(pb.authStore.record as Record<string, unknown>)?.email ?? 'User'}
+		</p>
 	</div>
 
 	<Button href={resolve('/orders/new')} variant="primary" class="mb-10 w-full justify-center">
@@ -46,14 +49,9 @@
 		{/each}
 	</div>
 
-	<div class="mt-auto border-t border-surface-dim pt-4">
-		<div class="mb-3 px-2">
-			<p class="font-label text-sm text-on-surface">
-				{(pb.authStore.record as Record<string, unknown>)?.email ?? 'User'}
-			</p>
-		</div>
+	<div class="mt-auto flex flex-col border-t border-surface-dim pt-4">
 		<Button variant="tertiary" onclick={handleLogout}>
-			<span class="material-symbols-outlined">logout</span>
+			<span class="material-symbols-outlined text-sm!">logout</span>
 			<span>Sign out</span>
 		</Button>
 	</div>

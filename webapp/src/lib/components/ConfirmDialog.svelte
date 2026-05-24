@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Button from './Button.svelte';
+
 	let {
 		open = false,
 		title = 'Confirm',
@@ -29,18 +31,8 @@
 			<h3 class="mb-3 font-headline text-xl text-on-surface">{title}</h3>
 			<p class="mb-8 font-body text-sm text-on-surface-variant">{message}</p>
 			<div class="flex justify-end gap-4">
-				<button
-					onclick={oncancel}
-					class="cursor-pointer px-6 py-3 font-label text-on-surface-variant underline decoration-on-surface-variant underline-offset-4 transition-all hover:no-underline"
-				>
-					Cancel
-				</button>
-				<button
-					onclick={onconfirm}
-					class="cursor-pointer rounded-full bg-error px-5 py-3 font-label text-sm text-on-error transition-colors hover:bg-error-container hover:text-on-error-container"
-				>
-					{confirmLabel}
-				</button>
+				<Button variant="tertiary" onclick={oncancel}>Cancel</Button>
+				<Button variant="danger" onclick={onconfirm}>{confirmLabel}</Button>
 			</div>
 		</div>
 	</div>

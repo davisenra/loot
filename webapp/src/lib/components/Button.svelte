@@ -24,8 +24,7 @@
 			'cursor-pointer rounded-full bg-primary px-4 py-3 text-on-primary hover:bg-primary-container hover:text-on-primary-container disabled:cursor-not-allowed disabled:opacity-50',
 		secondary:
 			'cursor-pointer rounded-full bg-surface-container-lowest px-5 py-2.5 text-on-surface-variant shadow-ghost hover:bg-surface-container hover:text-primary',
-		tertiary:
-			'cursor-pointer px-6 py-3 text-on-surface-variant underline decoration-on-surface-variant underline-offset-4 hover:no-underline',
+		tertiary: 'cursor-pointer px-6 py-3 text-on-surface-variant decoration-on-surface-variant',
 		danger:
 			'cursor-pointer rounded-full px-5 py-2.5 text-on-surface-variant shadow-ghost hover:bg-error/10 hover:text-error'
 	};
