@@ -6,14 +6,12 @@ Loot is a self-hosted order tracking/management webapp designed for customers.
 
 Loot follows a simple architecture.
 
-- API powered by Pocketbase (under `/pocketbase`)
-- Webapp powered by SvelteKit (under `/webapp`)
-  - Please use `pnpm`
-  - The webpapp is a traditional SPA
-
-## Design System
-
-Please refer to `DESIGN.md` for all things UI-related.
+- API:
+  - Pocketbase (under `/pocketbase`)
+  - Sqlite
+- Webapp:
+  - SvelteKit SPA (under `/webapp`)
+  - pnpm, TailwindCSS, Vite
 
 ## Self-Hosting
 
@@ -28,8 +26,6 @@ docker run -d \
   -v loot-data:/pb_data \
   loot:latest
 ```
-
-Point a domain to your server (e.g., `loot.mydomain.com`) and you're set.
 
 ### Volumes
 
