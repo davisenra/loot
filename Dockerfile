@@ -1,6 +1,5 @@
 FROM node:26-alpine AS spa-builder
 
-ENV VITE_POCKETBASE_URL="http://127.0.0.1:8090"
 ENV CI="true"
 
 WORKDIR /app
@@ -32,8 +31,8 @@ RUN apk add --no-cache \
 COPY --from=pb-downloader /pb/pocketbase /pb/pocketbase
 COPY --from=spa-builder /app/build /var/www/spa
 
-COPY ./pocketbase/pb_migrations /pb/pb_migrations
-COPY ./pocketbase/pb_hooks /pb/pb_hooks
+COPY ./pocketbase/pb_migrations /migrations
+COPY ./pocketbase/pb_hooks /hooks
 
 COPY .docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY .docker/entrypoint.sh /entrypoint.sh
@@ -47,7 +46,7 @@ LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
 LABEL org.opencontainers.image.licenses=MIT
 
-VOLUME /pb_data
+VOLUME /storage
 EXPOSE 80
 
 ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]

@@ -23,7 +23,7 @@ A Docker image that bundles the project into a single container is available.
 docker run -d \
   --name loot:latest \
   -p 80:80 \
-  -v loot-data:/pb_data \
+  -v loot-data:/storage \
   loot:latest
 ```
 
@@ -31,9 +31,9 @@ docker run -d \
 
 | Volume | Description |
 |--------|-------------|
-| `/pb_data` | **required for persistence** |
+| `/storage` | **required for persistence** |
 
-Without mounting a volume for `/pb_data`, all data is lost when the container is removed.
+Without mounting a volume for `/storage`, all data is lost when the container is removed.
 
 ## Contributions
 
