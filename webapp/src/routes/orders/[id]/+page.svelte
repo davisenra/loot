@@ -78,13 +78,15 @@
 			<div>
 				<div class="mb-3 flex items-center gap-4">
 					<h2 class="font-headline text-6xl tracking-tight text-on-surface">
-						{order.externalId || order.description}
+						{order.description}
 					</h2>
 					<StatusBadge status={order.status as Status} />
 				</div>
-				<p class="font-body text-lg text-on-surface-variant">
-					{order.description}
-				</p>
+				{#if order.externalId}
+					<p class="font-body text-lg text-on-surface-variant">
+						{order.externalId}
+					</p>
+				{/if}
 				<p class="mt-2 font-label text-sm text-on-surface-variant">
 					{order.store} &middot; Placed on {formatDate(order.orderedAt || order.created)}
 				</p>
@@ -142,7 +144,7 @@
 		<StatusProgress status={order.status as Status} />
 	</section>
 
-	<div class="grid grid-cols-12 gap-12">
+	<div class="grid grid-cols-12 gap-12 bg-yellow-100">
 		<div class="col-span-8 space-y-16">
 			<section>
 				<h3
@@ -156,7 +158,7 @@
 					<div class="space-y-6">
 						{#each items as item, i (i)}
 							<article
-								class="flex cursor-default gap-6 rounded-2xl bg-surface-container-lowest p-6 transition-colors hover:bg-surface-container-low"
+								class="flex cursor-default gap-6 rounded-2xl bg-surface-container-lowest p-6"
 							>
 								{#if item.image}
 									<img
@@ -193,7 +195,7 @@
 												href={item.itemUrl}
 												target="_blank"
 												rel="noopener noreferrer"
-												class="inline-flex items-center gap-1 font-label text-sm text-primary hover:underline"
+												class="inline-flex items-center gap-1 font-label text-sm text-primary"
 											>
 												<span class="material-symbols-outlined text-sm">open_in_new</span>
 												Item Link

@@ -46,38 +46,37 @@
 <div class="flex flex-col gap-2">
 	{#if label}
 		<label
-			class="font-label {size === 'compact' ? 'text-xs' : 'text-sm'} font-medium text-on-surface-variant"
+			class="font-label {size === 'compact'
+				? 'text-xs'
+				: 'text-sm'} font-medium text-on-surface-variant"
 			for={id}
 		>
-			{label}{#if required} <span class="text-error">*</span>{/if}
+			{label}{#if required}
+				<span class="text-error">*</span>{/if}
 		</label>
 	{/if}
 	{#if isTextarea}
-		<textarea {id} bind:value {placeholder} {required} class="{inputClasses} resize-y" {rows}></textarea>
-	{:else if prefix}
-		<div class="relative">
-			<span
-				class="absolute {size === 'compact' ? 'top-2.5 left-3' : 'top-3 left-4'} font-body {size === 'compact' ? 'text-sm' : ''} text-on-surface-variant"
-			>
-				{prefix}
-			</span>
-			<input
-				{id}
-				{type}
-				bind:value
-				{placeholder}
-				{required}
-				class={inputClasses}
-			/>
-		</div>
-	{:else}
-		<input
+		<textarea
 			{id}
-			{type}
 			bind:value
 			{placeholder}
 			{required}
-			class={inputClasses}
-		/>
+			class="{inputClasses} resize-y"
+			{rows}
+		></textarea>
+	{:else if prefix}
+		<div class="relative">
+			<span
+				class="absolute {size === 'compact' ? 'top-2.5 left-3' : 'top-3 left-4'} font-body {size ===
+				'compact'
+					? 'text-sm'
+					: ''} text-on-surface-variant"
+			>
+				{prefix}
+			</span>
+			<input {id} {type} bind:value {placeholder} {required} class={inputClasses} />
+		</div>
+	{:else}
+		<input {id} {type} bind:value {placeholder} {required} class={inputClasses} />
 	{/if}
 </div>

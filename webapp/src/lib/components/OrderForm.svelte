@@ -183,11 +183,43 @@
 	<Card variant="elevated">
 		<h3 class="mb-6 font-headline text-xl text-on-surface">Order Details</h3>
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-			<TextField id="description" label="Description" type="text" bind:value={description} placeholder="e.g. Summer Wardrobe" required />
-			<TextField id="store" label="Store" type="text" bind:value={store} placeholder="e.g. Example Store" required />
-			<TextField id="orderUrl" label="Order URL" type="url" bind:value={orderUrl} placeholder="https://example.com/order/123" />
-			<TextField id="externalId" label="External ID" type="text" bind:value={externalId} placeholder="e.g. ORD-12345" />
-			<TextField id="trackingCode" label="Tracking Code" type="text" bind:value={trackingCode} placeholder="e.g. 1Z9999999999999999" />
+			<TextField
+				id="description"
+				label="Description"
+				type="text"
+				bind:value={description}
+				placeholder="e.g. Summer Wardrobe"
+				required
+			/>
+			<TextField
+				id="store"
+				label="Store"
+				type="text"
+				bind:value={store}
+				placeholder="e.g. Example Store"
+				required
+			/>
+			<TextField
+				id="orderUrl"
+				label="Order URL"
+				type="url"
+				bind:value={orderUrl}
+				placeholder="https://example.com/order/123"
+			/>
+			<TextField
+				id="externalId"
+				label="External ID"
+				type="text"
+				bind:value={externalId}
+				placeholder="e.g. ORD-12345"
+			/>
+			<TextField
+				id="trackingCode"
+				label="Tracking Code"
+				type="text"
+				bind:value={trackingCode}
+				placeholder="e.g. 1Z9999999999999999"
+			/>
 
 			<div class="flex flex-col gap-2">
 				<label class="font-label text-sm font-medium text-on-surface-variant" for="status">
@@ -211,10 +243,24 @@
 				<CurrencySelect bind:value={currency} />
 			</div>
 
-			<TextField id="shippingCost" label="Shipping Cost" type="number" bind:value={shippingCost} placeholder="0.00" prefix="$" />
+			<TextField
+				id="shippingCost"
+				label="Shipping Cost"
+				type="number"
+				bind:value={shippingCost}
+				placeholder="0.00"
+				prefix="$"
+			/>
 
 			<div class="flex flex-col gap-2 md:col-span-2">
-				<TextField id="notes" label="Notes" type="textarea" bind:value={notes} placeholder="Any additional notes..." rows={3} />
+				<TextField
+					id="notes"
+					label="Notes"
+					type="textarea"
+					bind:value={notes}
+					placeholder="Any additional notes..."
+					rows={3}
+				/>
 			</div>
 
 			<div class="flex flex-col gap-2 md:col-span-2">
@@ -243,7 +289,8 @@
 		<h3 class="mb-6 font-headline text-xl text-on-surface">Order Summary</h3>
 		<div class="space-y-4 font-body text-sm">
 			<DetailRow label="Items">
-				{itemCount} {itemCount === 1 ? 'item' : 'items'}
+				{itemCount}
+				{itemCount === 1 ? 'item' : 'items'}
 			</DetailRow>
 			<DetailRow label="Subtotal">
 				{formatCurrency(subtotal, currency)}

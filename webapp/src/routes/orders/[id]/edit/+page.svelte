@@ -39,6 +39,10 @@
 {:else if notFound || !order}
 	<StateMessage type="error" message="Order not found." />
 {:else}
-	<PageHeader backHref={resolve(`/orders/${order.id}`)} backLabel="Back to Order" title="Edit Order" />
+	<PageHeader
+		backHref={resolve(`/orders/${order.id}`)}
+		backLabel="Back to Order"
+		title="Edit Order"
+	/>
 	<OrderForm {order} {items} {tagIds} {tagNames} />
 {/if}

@@ -18,7 +18,9 @@
 			href={backHref}
 			class="group mb-6 inline-flex items-center gap-2 font-label text-sm text-on-surface-variant transition-colors hover:text-primary"
 		>
-			<span class="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1">
+			<span
+				class="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1"
+			>
 				arrow_back
 			</span>
 			{backLabel}

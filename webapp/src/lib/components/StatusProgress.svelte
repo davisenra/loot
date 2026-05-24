@@ -23,7 +23,11 @@
 					{status === 'returned' ? 'undo' : 'archive'}
 				</span>
 			</div>
-			<span class="font-label text-sm {status === 'returned' ? 'text-error' : 'text-on-surface-variant'}">
+			<span
+				class="font-label text-sm {status === 'returned'
+					? 'text-error'
+					: 'text-on-surface-variant'}"
+			>
 				{statusLabels[status]}
 			</span>
 		</div>
@@ -32,7 +36,8 @@
 			<div class="flex items-center">
 				<div class="flex flex-col items-center">
 					<div
-						class="flex h-8 w-8 items-center justify-center rounded-full transition-colors {i < currentIndex
+						class="flex h-8 w-8 items-center justify-center rounded-full transition-colors {i <
+						currentIndex
 							? 'bg-primary text-on-primary'
 							: i === currentIndex
 								? 'bg-primary text-on-primary ring-2 ring-primary/30'
