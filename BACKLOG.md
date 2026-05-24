@@ -25,3 +25,4 @@ Features:
 Bugs/Issues:
 
 - [X] Improve "Edit" button consistency with the design system
+- [X] Optimize PocketBase data calls (fields projection, batch operations)

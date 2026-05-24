@@ -54,17 +54,20 @@ export async function fetchRecentOrders(limit = 4): Promise<OrdersRecord[]> {
 
 export async function fetchSummary(): Promise<OrderSummary> {
 	try {
-		const [activeOrders, inTransit, delivered] = await Promise.all([
-			pb.collection('orders').getList(1, 1, {
-				filter: "status != 'delivered' && status != 'archived' && status != 'returned'"
-			}),
-			pb.collection('orders').getList(1, 1, {
-				filter: "status = 'inTransit'"
-			}),
-			pb.collection('orders').getList(1, 1, {
-				filter: "status = 'delivered'"
-			})
-		]);
+const [activeOrders, inTransit, delivered] = await Promise.all([
+		pb.collection('orders').getList(1, 1, {
+			filter: "status != 'delivered' && status != 'archived' && status != 'returned'",
+			fields: 'id'
+		}),
+		pb.collection('orders').getList(1, 1, {
+			filter: "status = 'inTransit'",
+			fields: 'id'
+		}),
+		pb.collection('orders').getList(1, 1, {
+			filter: "status = 'delivered'",
+			fields: 'id'
+		})
+	]);
 		return {
 			activeOrders: activeOrders.totalItems,
 			inTransit: inTransit.totalItems,
@@ -94,7 +97,9 @@ export async function createTag(name: string): Promise<TagsRecord> {
 
 export async function fetchTagOrderCounts(): Promise<Map<string, number>> {
 	try {
-		const orders = await pb.collection('orders').getFullList<OrdersRecord>();
+		const orders = await pb.collection('orders').getFullList<OrdersRecord>({
+			fields: 'tags'
+		});
 		const counts = new Map<string, number>();
 		for (const order of orders) {
 			for (const tagId of order.tags) {
@@ -112,11 +117,18 @@ export async function deleteTag(id: string): Promise<boolean> {
 	try {
 		const orders = await pb
 			.collection('orders')
-			.getFullList<OrdersRecord>({ filter: pb.filter('tags ~ {:tagId}', { tagId: id }) });
-		for (const order of orders) {
-			await pb.collection('orders').update(order.id, {
-				tags: order.tags.filter((tid) => tid !== id)
+			.getFullList<OrdersRecord>({
+				filter: pb.filter('tags ~ {:tagId}', { tagId: id }),
+				fields: 'id,tags'
 			});
+		if (orders.length > 0) {
+			const batch = pb.createBatch();
+			for (const order of orders) {
+				batch.collection('orders').update(order.id, {
+					tags: order.tags.filter((tid) => tid !== id)
+				});
+			}
+			await batch.send();
 		}
 		await pb.collection('tags').delete(id);
 		return true;
@@ -135,11 +147,15 @@ export async function createOrder(
 		user: pb.authStore.record?.id
 	});
 
-	for (const item of items) {
-		await pb.collection('orderItems').create({
-			...item,
-			order: order.id
-		});
+	if (items.length > 0) {
+		const batch = pb.createBatch();
+		for (const item of items) {
+			batch.collection('orderItems').create({
+				...item,
+				order: order.id
+			});
+		}
+		await batch.send();
 	}
 
 	return order;
@@ -153,15 +169,18 @@ export async function updateOrder(
 ): Promise<OrdersRecord> {
 	const order = await pb.collection('orders').update<OrdersRecord>(id, data);
 
-	for (const item of newItems) {
-		await pb.collection('orderItems').create({
-			...item,
-			order: id
-		});
-	}
-
-	for (const item of updatedItems) {
-		await pb.collection('orderItems').update(item.id, item.data);
+	if (newItems.length > 0 || updatedItems.length > 0) {
+		const batch = pb.createBatch();
+		for (const item of newItems) {
+			batch.collection('orderItems').create({
+				...item,
+				order: id
+			});
+		}
+		for (const item of updatedItems) {
+			batch.collection('orderItems').update(item.id, item.data);
+		}
+		await batch.send();
 	}
 
 	return order;
@@ -195,11 +214,20 @@ export async function deleteOrder(id: string): Promise<boolean> {
 	try {
 		const items = await pb
 			.collection('orderItems')
-			.getFullList<OrderItemsRecord>({ filter: pb.filter('order = {:order}', { order: id }) });
-		for (const item of items) {
-			await pb.collection('orderItems').delete(item.id);
+			.getFullList<OrderItemsRecord>({
+				filter: pb.filter('order = {:order}', { order: id }),
+				fields: 'id'
+			});
+		if (items.length > 0) {
+			const batch = pb.createBatch();
+			for (const item of items) {
+				batch.collection('orderItems').delete(item.id);
+			}
+			batch.collection('orders').delete(id);
+			await batch.send();
+		} else {
+			await pb.collection('orders').delete(id);
 		}
-		await pb.collection('orders').delete(id);
 		return true;
 	} catch (err) {
 		console.error('Failed to delete order:', err);
