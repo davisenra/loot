@@ -1,6 +1,7 @@
 <script lang="ts">
 	import StatusBadge from '$lib/components/StatusBadge.svelte';
 	import StateMessage from '$lib/components/StateMessage.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
 	import { resolve } from '$app/paths';
 	import { type Status } from '$lib/status';
 	import { fetchSummary, fetchRecentOrders } from '$lib/data/orders';
@@ -35,9 +36,7 @@
 </script>
 
 <div>
-	<section class="mb-16 max-w-3xl">
-		<h2 class="mb-6 font-headline text-5xl leading-tight text-on-surface">Welcome</h2>
-	</section>
+	<PageHeader title="Dashboard" />
 
 	<section class="mb-20 grid grid-cols-3 gap-6">
 		{#each summaryCards as card (card.label)}

@@ -20,6 +20,7 @@ Features:
 - [X] Delete Orders
 - [X] Show status progress
 - [ ] Add financial stats to the dashboard
+- [X] Add tag management screen
 
 Bugs/Issues:
 

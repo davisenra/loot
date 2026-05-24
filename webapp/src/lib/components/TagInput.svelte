@@ -60,7 +60,7 @@
 </script>
 
 <div
-	class="flex min-h-13 flex-wrap items-center gap-2 rounded border border-transparent bg-surface-container-lowest px-4 py-2 shadow-ghost transition-all focus-within:border-transparent focus-within:shadow-ghost-focus"
+	class="flex min-h-13 flex-wrap items-center gap-2 rounded border border-transparent bg-surface-container-lowest px-4 py-2 shadow-ghost transition-all"
 >
 	{#each selected as id, i (id)}
 		<span
@@ -93,7 +93,7 @@
 				}
 			}}
 			placeholder={selected.length === 0 ? 'Add a tag...' : ''}
-			class="w-full border-none bg-transparent p-1 font-body text-sm text-on-surface outline-none"
+			class="w-full rounded-md border-none bg-transparent p-1 font-body text-sm text-on-surface outline-none"
 		/>
 		{#if showDropdown}
 			<div
@@ -104,7 +104,7 @@
 						<button
 							type="button"
 							onclick={() => addTag(tag)}
-							class="block w-full px-4 py-2 text-left font-label text-sm text-on-surface hover:bg-surface-container-low"
+							class="block w-full cursor-pointer px-4 py-2 text-left font-label text-sm text-on-surface hover:bg-surface-container-low"
 						>
 							{tag.name}
 						</button>

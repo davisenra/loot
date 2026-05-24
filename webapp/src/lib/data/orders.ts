@@ -92,6 +92,40 @@ export async function createTag(name: string): Promise<TagsRecord> {
 	});
 }
 
+export async function fetchTagOrderCounts(): Promise<Map<string, number>> {
+	try {
+		const orders = await pb.collection('orders').getFullList<OrdersRecord>();
+		const counts = new Map<string, number>();
+		for (const order of orders) {
+			for (const tagId of order.tags) {
+				counts.set(tagId, (counts.get(tagId) ?? 0) + 1);
+			}
+		}
+		return counts;
+	} catch (err) {
+		console.error('Failed to fetch tag order counts:', err);
+		return new Map();
+	}
+}
+
+export async function deleteTag(id: string): Promise<boolean> {
+	try {
+		const orders = await pb
+			.collection('orders')
+			.getFullList<OrdersRecord>({ filter: pb.filter('tags ~ {:tagId}', { tagId: id }) });
+		for (const order of orders) {
+			await pb.collection('orders').update(order.id, {
+				tags: order.tags.filter((tid) => tid !== id)
+			});
+		}
+		await pb.collection('tags').delete(id);
+		return true;
+	} catch (err) {
+		console.error('Failed to delete tag:', err);
+		return false;
+	}
+}
+
 export async function createOrder(
 	data: Omit<OrdersRecord, 'id' | 'created' | 'updated' | 'user'>,
 	items: Omit<OrderItemsRecord, 'id' | 'created' | 'updated' | 'order'>[]

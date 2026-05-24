@@ -56,8 +56,14 @@
 		</label>
 	{/if}
 	{#if isTextarea}
-		<textarea {id} bind:value {placeholder} {required} class="{inputClasses} resize-y" {rows}>
-		</textarea>
+		<textarea
+			{id}
+			bind:value
+			{placeholder}
+			{required}
+			class="{inputClasses} resize-y"
+			{rows}
+		></textarea>
 	{:else if prefix}
 		<div class="relative">
 			<span

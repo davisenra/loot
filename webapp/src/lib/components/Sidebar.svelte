@@ -8,7 +8,8 @@
 
 	const navItems = [
 		{ href: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
-		{ href: '/orders', icon: 'package_2', label: 'Orders' }
+		{ href: '/orders', icon: 'package_2', label: 'Orders' },
+		{ href: '/tags', icon: 'label', label: 'Tags' }
 	] as const;
 
 	function handleLogout() {

@@ -136,9 +136,9 @@
 											<div
 												class="flex h-32 w-32 shrink-0 items-center justify-center rounded-xl bg-surface-container text-outline"
 											>
-												<span class="material-symbols-outlined text-3xl opacity-50"
-													>inventory_2</span
-												>
+												<span class="material-symbols-outlined text-3xl opacity-50">
+													inventory_2
+												</span>
 											</div>
 										{/if}
 										<div class="flex flex-1 flex-col justify-between">

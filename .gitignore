@@ -4,3 +4,6 @@ pocketbase/pocketbase
 
 # OS
 .DS_Store
+
+# AI
+.opencode

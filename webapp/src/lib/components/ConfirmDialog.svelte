@@ -31,13 +31,13 @@
 			<div class="flex justify-end gap-4">
 				<button
 					onclick={oncancel}
-					class="px-6 py-3 font-label text-on-surface-variant underline decoration-on-surface-variant underline-offset-4 transition-all hover:no-underline"
+					class="cursor-pointer px-6 py-3 font-label text-on-surface-variant underline decoration-on-surface-variant underline-offset-4 transition-all hover:no-underline"
 				>
 					Cancel
 				</button>
 				<button
 					onclick={onconfirm}
-					class="rounded-full bg-error px-5 py-3 font-label text-sm text-on-error transition-colors hover:bg-error-container hover:text-on-error-container"
+					class="cursor-pointer rounded-full bg-error px-5 py-3 font-label text-sm text-on-error transition-colors hover:bg-error-container hover:text-on-error-container"
 				>
 					{confirmLabel}
 				</button>
