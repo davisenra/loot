@@ -54,28 +54,59 @@ export async function fetchRecentOrders(limit = 4): Promise<OrdersRecord[]> {
 
 export async function fetchSummary(): Promise<OrderSummary> {
 	try {
-const [activeOrders, inTransit, delivered] = await Promise.all([
-		pb.collection('orders').getList(1, 1, {
-			filter: "status != 'delivered' && status != 'archived' && status != 'returned'",
-			fields: 'id'
-		}),
-		pb.collection('orders').getList(1, 1, {
-			filter: "status = 'inTransit'",
-			fields: 'id'
-		}),
-		pb.collection('orders').getList(1, 1, {
-			filter: "status = 'delivered'",
-			fields: 'id'
-		})
-	]);
+		const [activeOrders, inTransit, delivered, allRelevant, draftOrders] = await Promise.all([
+			pb.collection('orders').getList(1, 1, {
+				filter: "status != 'delivered' && status != 'archived' && status != 'returned'",
+				fields: 'id'
+			}),
+			pb.collection('orders').getList(1, 1, {
+				filter: "status = 'inTransit'",
+				fields: 'id'
+			}),
+			pb.collection('orders').getList(1, 1, {
+				filter: "status = 'delivered'",
+				fields: 'id'
+			}),
+			pb.collection('orders').getFullList<OrdersRecord>({
+				filter: "status = 'ordered' || status = 'inTransit' || status = 'delivered'",
+				fields: 'totalPrice,orderedAt'
+			}),
+			pb.collection('orders').getList(1, 1, {
+				filter: "status = 'draft'",
+				fields: 'id'
+			})
+		]);
+
+		const thirtyDaysAgo = new Date();
+		thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+		let totalSpent = 0;
+		let last30Days = 0;
+		for (const order of allRelevant) {
+			totalSpent += order.totalPrice ?? 0;
+			if (order.orderedAt && new Date(order.orderedAt) >= thirtyDaysAgo) {
+				last30Days += order.totalPrice ?? 0;
+			}
+		}
+
 		return {
 			activeOrders: activeOrders.totalItems,
 			inTransit: inTransit.totalItems,
-			delivered: delivered.totalItems
+			delivered: delivered.totalItems,
+			totalSpent,
+			last30Days,
+			draftCount: draftOrders.totalItems
 		};
 	} catch (err) {
 		console.error('Failed to fetch summary:', err);
-		return { activeOrders: 0, inTransit: 0, delivered: 0 };
+		return {
+			activeOrders: 0,
+			inTransit: 0,
+			delivered: 0,
+			totalSpent: 0,
+			last30Days: 0,
+			draftCount: 0
+		};
 	}
 }
 
@@ -115,12 +146,10 @@ export async function fetchTagOrderCounts(): Promise<Map<string, number>> {
 
 export async function deleteTag(id: string): Promise<boolean> {
 	try {
-		const orders = await pb
-			.collection('orders')
-			.getFullList<OrdersRecord>({
-				filter: pb.filter('tags ~ {:tagId}', { tagId: id }),
-				fields: 'id,tags'
-			});
+		const orders = await pb.collection('orders').getFullList<OrdersRecord>({
+			filter: pb.filter('tags ~ {:tagId}', { tagId: id }),
+			fields: 'id,tags'
+		});
 		if (orders.length > 0) {
 			const batch = pb.createBatch();
 			for (const order of orders) {
@@ -212,12 +241,10 @@ export async function unarchiveOrder(id: string): Promise<OrdersRecord | null> {
 
 export async function deleteOrder(id: string): Promise<boolean> {
 	try {
-		const items = await pb
-			.collection('orderItems')
-			.getFullList<OrderItemsRecord>({
-				filter: pb.filter('order = {:order}', { order: id }),
-				fields: 'id'
-			});
+		const items = await pb.collection('orderItems').getFullList<OrderItemsRecord>({
+			filter: pb.filter('order = {:order}', { order: id }),
+			fields: 'id'
+		});
 		if (items.length > 0) {
 			const batch = pb.createBatch();
 			for (const item of items) {

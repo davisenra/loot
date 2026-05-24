@@ -61,4 +61,7 @@ export type OrderSummary = {
 	activeOrders: number;
 	inTransit: number;
 	delivered: number;
+	totalSpent: number;
+	last30Days: number;
+	draftCount: number;
 };

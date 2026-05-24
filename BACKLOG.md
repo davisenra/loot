@@ -7,7 +7,7 @@ A backlog of desired features, bugs/issues to fix and overall improvements.
 Features:
 
 - [ ] Add image upload support (or run a routine to populate images)
-- [ ] Add financial stats to the dashboard
+- [X] Add financial stats to the dashboard
 
 Bugs/Issues:
 
@@ -19,8 +19,9 @@ Features:
 
 - [X] Delete Orders
 - [X] Show status progress
-- [ ] Add financial stats to the dashboard
+- [X] Add financial stats to the dashboard
 - [X] Add tag management screen
+- [ ] Add favicon
 
 Bugs/Issues:
 

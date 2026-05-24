@@ -3,7 +3,6 @@
 	import type { TagsRecord } from '$lib/types';
 	import { onMount } from 'svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
-	import Button from '$lib/components/Button.svelte';
 	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
 	import StateMessage from '$lib/components/StateMessage.svelte';
 
