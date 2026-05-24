@@ -25,6 +25,13 @@ tasks:
     cmds:
       - pnpm run dev
 
+  lint:
+    desc: Lint webapp
+    dir: webapp
+    cmds:
+      - pnpm lint
+      - pnpm check
+
   build:
     desc: Builds the Docker image
     cmds:
