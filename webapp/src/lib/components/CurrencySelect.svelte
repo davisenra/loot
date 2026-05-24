@@ -19,7 +19,7 @@
 
 <select
 	bind:value
-	class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
+	class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-ghost transition-all focus:shadow-ghost-focus focus:outline-none"
 >
 	{#each currencies as c (c.code)}
 		<option value={c.code}>{c.label}</option>

@@ -3,13 +3,14 @@
 	import { resolve } from '$app/paths';
 	import type { OrdersRecord } from '$lib/types';
 	import type { Status } from '$lib/status';
+	import { formatCurrency } from '$lib/format';
 
 	let { order }: { order: OrdersRecord } = $props();
 </script>
 
 <a
 	href={resolve(`/orders/${order.id}`)}
-	class="group flex cursor-pointer flex-col gap-8 rounded-xl bg-surface-container-lowest p-8 shadow-[0_4px_24px_rgba(27,28,29,0.04)] transition-colors duration-300 hover:bg-surface-container-low"
+	class="group flex cursor-pointer flex-col gap-8 rounded-xl bg-surface-container-lowest p-8 shadow-card transition-colors duration-300 hover:bg-surface-container-low"
 >
 	<div class="flex items-start justify-between">
 		<div>
@@ -18,9 +19,7 @@
 		</div>
 		<div class="text-right">
 			<span class="font-body text-xl font-medium text-on-surface">
-				{order.currency ? order.currency + ' ' : '$'}{order.totalPrice.toLocaleString('en-US', {
-					minimumFractionDigits: 2
-				})}
+				{formatCurrency(order.totalPrice, order.currency)}
 			</span>
 		</div>
 	</div>

@@ -60,7 +60,7 @@
 </script>
 
 <div
-	class="flex min-h-[52px] flex-wrap items-center gap-2 rounded border border-transparent bg-surface-container-lowest px-4 py-2 shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus-within:border-transparent focus-within:shadow-[inset_0_0_0_2px_var(--color-primary)]"
+	class="flex min-h-13 flex-wrap items-center gap-2 rounded border border-transparent bg-surface-container-lowest px-4 py-2 shadow-ghost transition-all focus-within:border-transparent focus-within:shadow-ghost-focus"
 >
 	{#each selected as id, i (id)}
 		<span
@@ -72,11 +72,11 @@
 				onclick={() => removeTag(id)}
 				class="text-on-surface-variant hover:text-error"
 			>
-				<span class="material-symbols-outlined text-[14px]">close</span>
+				<span class="material-symbols-outlined text-sm">close</span>
 			</button>
 		</span>
 	{/each}
-	<div class="relative min-w-[100px] flex-1">
+	<div class="relative min-w-25 flex-1">
 		<input
 			type="text"
 			bind:value={query}

@@ -1,23 +1,31 @@
 <script lang="ts">
 	import StatusBadge from '$lib/components/StatusBadge.svelte';
+	import StatusProgress from '$lib/components/StatusProgress.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import ConfirmDialog from '$lib/components/ConfirmDialog.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
+	import Card from '$lib/components/Card.svelte';
+	import DetailRow from '$lib/components/DetailRow.svelte';
+	import StateMessage from '$lib/components/StateMessage.svelte';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 	import type { Status } from '$lib/status';
-	import { fetchOrder } from '$lib/data/orders';
+	import { fetchOrder, deleteOrder, archiveOrder, unarchiveOrder } from '$lib/data/orders';
 	import pb from '$lib/pocketbase';
 	import type { OrdersRecord, OrderItemsRecord, TagsRecord } from '$lib/types';
 	import { onMount } from 'svelte';
+	import { formatCurrency, formatDate } from '$lib/format';
 
 	let order: OrdersRecord | null = $state(null);
 	let items: OrderItemsRecord[] = $state([]);
 	let tags: TagsRecord[] = $state([]);
 	let loading = $state(true);
 	let error = $state(false);
+	let showDeleteDialog = $state(false);
 
-	function lineTotal(item: OrderItemsRecord): string {
-		return (item.quantity * item.unitPrice).toLocaleString('en-US', {
-			minimumFractionDigits: 2
-		});
+	function lineTotal(item: OrderItemsRecord): number {
+		return item.quantity * item.unitPrice;
 	}
 
 	onMount(async () => {
@@ -32,36 +40,40 @@
 		}
 		loading = false;
 	});
+
+	async function handleDelete() {
+		if (!order) return;
+		const success = await deleteOrder(order.id);
+		if (success) {
+			goto(resolve('/orders'), { replaceState: true });
+		} else {
+			showDeleteDialog = false;
+		}
+	}
+
+	async function handleArchive() {
+		if (!order) return;
+		const result = await archiveOrder(order.id);
+		if (result) order = { ...order, ...result };
+	}
+
+	async function handleUnarchive() {
+		if (!order) return;
+		const result = await unarchiveOrder(order.id);
+		if (result) order = { ...order, ...result };
+	}
 </script>
 
 {#if loading}
-	<div class="py-20 text-center">
-		<p class="font-body text-on-surface-variant">Loading order...</p>
-	</div>
+	<StateMessage type="loading" message="Loading order..." />
 {:else if error || !order}
-	<div class="py-20 text-center">
-		<p class="font-body text-on-surface-variant">Order not found.</p>
-		<a
-			href={resolve('/orders')}
-			class="mt-4 inline-block font-label text-sm text-primary hover:underline"
-		>
-			Back to Orders
-		</a>
-	</div>
+	<StateMessage
+		type="error"
+		message="Order not found."
+		action={{ label: 'Back to Orders', href: resolve('/orders') }}
+	/>
 {:else}
-	<header class="mb-16">
-		<a
-			href={resolve('/orders')}
-			class="group mb-6 inline-flex items-center gap-2 font-label text-sm text-on-surface-variant transition-colors hover:text-primary"
-		>
-			<span
-				class="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1"
-			>
-				arrow_back
-			</span>
-			Back to Orders
-		</a>
-
+	<PageHeader backHref={resolve('/orders')} backLabel="Back to Orders">
 		<div class="flex flex-wrap items-start justify-between gap-6">
 			<div>
 				<div class="mb-3 flex items-center gap-4">
@@ -74,9 +86,7 @@
 					{order.description}
 				</p>
 				<p class="mt-2 font-label text-sm text-on-surface-variant">
-					{order.store} &middot; Placed on {new Date(
-						order.orderedAt || order.created
-					).toLocaleDateString()}
+					{order.store} &middot; Placed on {formatDate(order.orderedAt || order.created)}
 				</p>
 				{#if order.orderUrl}
 					<a
@@ -104,15 +114,33 @@
 					<p class="mt-4 font-body text-sm text-on-surface-variant">{order.notes}</p>
 				{/if}
 			</div>
-			<a
-				href={resolve(`/orders/${order.id}/edit`)}
-				class="inline-flex items-center gap-2 rounded-full bg-surface-container-lowest px-5 py-2.5 font-label text-sm text-on-surface-variant shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-colors hover:bg-surface-container hover:text-primary"
-			>
-				<span class="material-symbols-outlined text-lg">edit</span>
-				Edit
-			</a>
+			<div class="flex items-center gap-3">
+				<Button href={resolve(`/orders/${order.id}/edit`)} variant="secondary">
+					<span class="material-symbols-outlined text-lg">edit</span>
+					Edit
+				</Button>
+				{#if order.status === 'archived'}
+					<Button variant="secondary" onclick={handleUnarchive}>
+						<span class="material-symbols-outlined text-lg">unarchive</span>
+						Unarchive
+					</Button>
+				{:else}
+					<Button variant="secondary" onclick={handleArchive}>
+						<span class="material-symbols-outlined text-lg">archive</span>
+						Archive
+					</Button>
+				{/if}
+				<Button variant="danger" onclick={() => (showDeleteDialog = true)}>
+					<span class="material-symbols-outlined text-lg">delete</span>
+					Delete
+				</Button>
+			</div>
 		</div>
-	</header>
+	</PageHeader>
+
+	<section class="mb-16">
+		<StatusProgress status={order.status as Status} />
+	</section>
 
 	<div class="grid grid-cols-12 gap-12">
 		<div class="col-span-8 space-y-16">
@@ -123,9 +151,7 @@
 					Items
 				</h3>
 				{#if items.length === 0}
-					<div class="py-8 text-center">
-						<p class="font-body text-on-surface-variant">No items in this order.</p>
-					</div>
+					<StateMessage type="empty" message="No items in this order." />
 				{:else}
 					<div class="space-y-6">
 						{#each items as item, i (i)}
@@ -136,11 +162,11 @@
 									<img
 										src={pb.files.getURL(item, item.image)}
 										alt={item.description}
-										class="h-32 w-32 flex-shrink-0 rounded-xl object-cover"
+										class="h-32 w-32 shrink-0 rounded-xl object-cover"
 									/>
 								{:else}
 									<div
-										class="flex h-32 w-32 flex-shrink-0 items-center justify-center rounded-xl bg-surface-container text-outline"
+										class="flex h-32 w-32 shrink-0 items-center justify-center rounded-xl bg-surface-container text-outline"
 									>
 										<span class="material-symbols-outlined text-3xl opacity-50">inventory_2</span>
 									</div>
@@ -152,7 +178,7 @@
 										</div>
 										<div class="text-right">
 											<p class="font-headline text-xl text-on-surface">
-												${item.unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+												{formatCurrency(item.unitPrice)}
 											</p>
 											<p class="mt-1 font-label text-xs text-on-surface-variant">
 												Qty: {item.quantity}
@@ -176,7 +202,7 @@
 											<span></span>
 										{/if}
 										<p class="font-headline text-lg font-semibold text-on-surface">
-											${lineTotal(item)}
+											{formatCurrency(lineTotal(item))}
 										</p>
 									</div>
 								</div>
@@ -188,98 +214,58 @@
 		</div>
 
 		<div class="col-span-4 space-y-8">
-			<div class="rounded-2xl bg-surface-container-low p-8">
+			<Card variant="filled">
 				<h3 class="mb-6 font-headline text-xl text-on-surface">Total</h3>
 				<div class="space-y-4 font-body text-sm">
 					{#if order.shippingCost}
-						<div class="flex justify-between text-on-surface-variant">
-							<span>Subtotal</span>
-							<span class="font-medium text-on-surface">
-								{order.currency ? `${order.currency} ` : '$'}
-								{(order.totalPrice - order.shippingCost).toLocaleString('en-US', {
-									minimumFractionDigits: 2
-								})}
-							</span>
-						</div>
-						<div class="flex justify-between text-on-surface-variant">
-							<span>Shipping</span>
-							<span class="font-medium text-on-surface">
-								{order.currency ? `${order.currency} ` : '$'}
-								{order.shippingCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-							</span>
-						</div>
+						<DetailRow label="Subtotal">
+							{formatCurrency(order.totalPrice - order.shippingCost, order.currency)}
+						</DetailRow>
+						<DetailRow label="Shipping">
+							{formatCurrency(order.shippingCost, order.currency)}
+						</DetailRow>
 						<div class="border-t border-surface-container-highest pt-4"></div>
 					{/if}
-					<div class="flex justify-between text-on-surface-variant">
-						<span>Total</span>
-						<span class="font-headline text-3xl font-bold text-primary">
-							{order.currency ? `${order.currency} ` : '$'}
-							{order.totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-						</span>
-					</div>
+					<DetailRow label="Total" highlight>
+						{formatCurrency(order.totalPrice, order.currency)}
+					</DetailRow>
 				</div>
-			</div>
+			</Card>
 
-			<div class="ghost-border rounded-2xl bg-surface-container-lowest p-8">
+			<Card variant="ghost">
 				<div class="mb-6 flex items-center gap-3">
 					<span class="material-symbols-outlined text-on-surface-variant">info</span>
 					<h3 class="font-headline text-xl text-on-surface">Details</h3>
 				</div>
 				<div class="space-y-4 font-body text-sm">
 					{#if order.trackingCode}
-						<div class="flex justify-between">
-							<span class="text-on-surface-variant">Tracking</span>
-							<span class="font-medium text-on-surface">
-								{order.trackingCode}
-							</span>
-						</div>
+						<DetailRow label="Tracking">{order.trackingCode}</DetailRow>
 					{/if}
 					{#if order.currency}
-						<div class="flex justify-between">
-							<span class="text-on-surface-variant">Currency</span>
-							<span class="font-medium text-on-surface">
-								{order.currency.toUpperCase()}
-							</span>
-						</div>
+						<DetailRow label="Currency">{order.currency.toUpperCase()}</DetailRow>
 					{/if}
-					<div class="flex justify-between">
-						<span class="text-on-surface-variant">Store</span>
-						<span class="font-medium text-on-surface">
-							{order.store}
-						</span>
-					</div>
+					<DetailRow label="Store">{order.store}</DetailRow>
 					{#if order.orderedAt}
-						<div class="flex justify-between">
-							<span class="text-on-surface-variant">Ordered</span>
-							<span class="font-medium text-on-surface">
-								{new Date(order.orderedAt).toLocaleDateString()}
-							</span>
-						</div>
+						<DetailRow label="Ordered">{formatDate(order.orderedAt)}</DetailRow>
 					{/if}
-					<div class="flex justify-between">
-						<span class="text-on-surface-variant">Created</span>
-						<span class="font-medium text-on-surface">
-							{new Date(order.created).toLocaleDateString()}
-						</span>
-					</div>
+					<DetailRow label="Created">{formatDate(order.created)}</DetailRow>
 					{#if order.deliveredAt}
-						<div class="flex justify-between">
-							<span class="text-on-surface-variant">Delivered</span>
-							<span class="font-medium text-on-surface">
-								{new Date(order.deliveredAt).toLocaleDateString()}
-							</span>
-						</div>
+						<DetailRow label="Delivered">{formatDate(order.deliveredAt)}</DetailRow>
 					{/if}
 					{#if order.archivedAt}
-						<div class="flex justify-between">
-							<span class="text-on-surface-variant">Archived</span>
-							<span class="font-medium text-on-surface">
-								{new Date(order.archivedAt).toLocaleDateString()}
-							</span>
-						</div>
+						<DetailRow label="Archived">{formatDate(order.archivedAt)}</DetailRow>
 					{/if}
 				</div>
-			</div>
+			</Card>
 		</div>
 	</div>
+
+	<ConfirmDialog
+		open={showDeleteDialog}
+		title="Delete Order"
+		message="Are you sure you want to delete this order? This action cannot be undone."
+		confirmLabel="Delete"
+		onconfirm={handleDelete}
+		oncancel={() => (showDeleteDialog = false)}
+	/>
 {/if}

@@ -8,6 +8,11 @@
 	import OrderItemRow from '$lib/components/OrderItemRow.svelte';
 	import TagInput from '$lib/components/TagInput.svelte';
 	import CurrencySelect from '$lib/components/CurrencySelect.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Card from '$lib/components/Card.svelte';
+	import DetailRow from '$lib/components/DetailRow.svelte';
+	import TextField from '$lib/components/TextField.svelte';
+	import { formatCurrency } from '$lib/format';
 	import type { ItemData } from '$lib/components/types';
 
 	let {
@@ -24,19 +29,31 @@
 
 	const isEdit = $derived(!!order);
 
+	// svelte-ignore state_referenced_locally
 	let description = $state(order?.description ?? '');
+	// svelte-ignore state_referenced_locally
 	let store = $state(order?.store ?? '');
+	// svelte-ignore state_referenced_locally
 	let status = $state<Status>(order?.status ?? 'draft');
+	// svelte-ignore state_referenced_locally
 	let orderUrl = $state(order?.orderUrl ?? '');
+	// svelte-ignore state_referenced_locally
 	let externalId = $state(order?.externalId ?? '');
+	// svelte-ignore state_referenced_locally
 	let trackingCode = $state(order?.trackingCode ?? '');
+	// svelte-ignore state_referenced_locally
 	let notes = $state(order?.notes ?? '');
+	// svelte-ignore state_referenced_locally
 	let currency = $state(order?.currency ?? 'BRL');
+	// svelte-ignore state_referenced_locally
 	let shippingCost = $state(order?.shippingCost ?? 0);
 
+	// svelte-ignore state_referenced_locally
 	let selectedTagIds = $state<string[]>([...initialTagIds]);
+	// svelte-ignore state_referenced_locally
 	let selectedTagNames = $state<string[]>([...initialTagNames]);
 
+	// svelte-ignore state_referenced_locally
 	let itemList = $state<ItemData[]>(
 		initialItems.length > 0
 			? initialItems.map((item) => ({
@@ -51,7 +68,6 @@
 	let submitting = $state(false);
 	let error = $state('');
 
-	let currencyPrefix = $derived(currency ? `${currency} ` : '$');
 	let itemCount = $derived(itemList.length);
 	let subtotal = $derived(itemList.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0));
 	let total = $derived(subtotal + (shippingCost || 0));
@@ -164,78 +180,14 @@
 </script>
 
 <form class="space-y-12" onsubmit={handleSubmit}>
-	<!-- Section: Order Meta -->
-	<section
-		class="rounded-xl border-0 bg-surface-container-lowest p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)]"
-	>
+	<Card variant="elevated">
 		<h3 class="mb-6 font-headline text-xl text-on-surface">Order Details</h3>
 		<div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-			<div class="flex flex-col gap-2">
-				<label class="font-label text-sm font-medium text-on-surface-variant" for="description">
-					Description <span class="text-error">*</span>
-				</label>
-				<input
-					id="description"
-					type="text"
-					bind:value={description}
-					placeholder="e.g. Summer Wardrobe"
-					required
-					class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
-				/>
-			</div>
-
-			<div class="flex flex-col gap-2">
-				<label class="font-label text-sm font-medium text-on-surface-variant" for="store">
-					Store <span class="text-error">*</span>
-				</label>
-				<input
-					id="store"
-					type="text"
-					bind:value={store}
-					placeholder="e.g. Example Store"
-					required
-					class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
-				/>
-			</div>
-
-			<div class="flex flex-col gap-2">
-				<label class="font-label text-sm font-medium text-on-surface-variant" for="orderUrl">
-					Order URL
-				</label>
-				<input
-					id="orderUrl"
-					type="url"
-					bind:value={orderUrl}
-					placeholder="https://example.com/order/123"
-					class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
-				/>
-			</div>
-
-			<div class="flex flex-col gap-2">
-				<label class="font-label text-sm font-medium text-on-surface-variant" for="externalId">
-					External ID
-				</label>
-				<input
-					id="externalId"
-					type="text"
-					bind:value={externalId}
-					placeholder="e.g. ORD-12345"
-					class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
-				/>
-			</div>
-
-			<div class="flex flex-col gap-2">
-				<label class="font-label text-sm font-medium text-on-surface-variant" for="trackingCode">
-					Tracking Code
-				</label>
-				<input
-					id="trackingCode"
-					type="text"
-					bind:value={trackingCode}
-					placeholder="e.g. 1Z9999999999999999"
-					class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
-				/>
-			</div>
+			<TextField id="description" label="Description" type="text" bind:value={description} placeholder="e.g. Summer Wardrobe" required />
+			<TextField id="store" label="Store" type="text" bind:value={store} placeholder="e.g. Example Store" required />
+			<TextField id="orderUrl" label="Order URL" type="url" bind:value={orderUrl} placeholder="https://example.com/order/123" />
+			<TextField id="externalId" label="External ID" type="text" bind:value={externalId} placeholder="e.g. ORD-12345" />
+			<TextField id="trackingCode" label="Tracking Code" type="text" bind:value={trackingCode} placeholder="e.g. 1Z9999999999999999" />
 
 			<div class="flex flex-col gap-2">
 				<label class="font-label text-sm font-medium text-on-surface-variant" for="status">
@@ -244,7 +196,7 @@
 				<select
 					id="status"
 					bind:value={status}
-					class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
+					class="w-full rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-ghost transition-all focus:shadow-ghost-focus focus:outline-none"
 				>
 					{#each allStatuses as s (s)}
 						<option value={s}>{statusLabels[s]}</option>
@@ -259,35 +211,10 @@
 				<CurrencySelect bind:value={currency} />
 			</div>
 
-			<div class="flex flex-col gap-2">
-				<label class="font-label text-sm font-medium text-on-surface-variant" for="shippingCost">
-					Shipping Cost
-				</label>
-				<div class="relative">
-					<span class="absolute top-3 left-4 font-body text-on-surface-variant">$</span>
-					<input
-						id="shippingCost"
-						type="number"
-						bind:value={shippingCost}
-						min="0"
-						step="0.01"
-						placeholder="0.00"
-						class="w-full rounded border-none bg-surface-container-lowest py-3 pr-4 pl-8 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
-					/>
-				</div>
-			</div>
+			<TextField id="shippingCost" label="Shipping Cost" type="number" bind:value={shippingCost} placeholder="0.00" prefix="$" />
 
 			<div class="flex flex-col gap-2 md:col-span-2">
-				<label class="font-label text-sm font-medium text-on-surface-variant" for="notes">
-					Notes
-				</label>
-				<textarea
-					id="notes"
-					bind:value={notes}
-					rows="3"
-					placeholder="Any additional notes..."
-					class="w-full resize-y rounded border-none bg-surface-container-lowest px-4 py-3 font-body text-on-surface shadow-[inset_0_0_0_1px_rgba(195,198,213,0.15)] transition-all focus:shadow-[inset_0_0_0_2px_var(--color-primary)] focus:outline-none"
-				></textarea>
+				<TextField id="notes" label="Notes" type="textarea" bind:value={notes} placeholder="Any additional notes..." rows={3} />
 			</div>
 
 			<div class="flex flex-col gap-2 md:col-span-2">
@@ -295,9 +222,8 @@
 				<TagInput bind:selected={selectedTagIds} bind:selectedNames={selectedTagNames} />
 			</div>
 		</div>
-	</section>
+	</Card>
 
-	<!-- Section: Items -->
 	<section class="space-y-6">
 		<h3 class="font-headline text-xl text-on-surface">Items</h3>
 		{#each itemList as item, i (i)}
@@ -313,59 +239,33 @@
 		</button>
 	</section>
 
-	<!-- Section: Order Summary -->
-	<section class="ghost-border rounded-2xl bg-surface-container-lowest p-8">
+	<Card variant="ghost">
 		<h3 class="mb-6 font-headline text-xl text-on-surface">Order Summary</h3>
 		<div class="space-y-4 font-body text-sm">
-			<div class="flex justify-between text-on-surface-variant">
-				<span>Items</span>
-				<span class="font-medium text-on-surface">
-					{itemCount}
-					{itemCount === 1 ? 'item' : 'items'}
-				</span>
-			</div>
-			<div class="flex justify-between text-on-surface-variant">
-				<span>Subtotal</span>
-				<span class="font-medium text-on-surface">
-					{currencyPrefix}{subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-				</span>
-			</div>
-			<div class="flex justify-between text-on-surface-variant">
-				<span>Shipping</span>
-				<span class="font-medium text-on-surface">
-					{currencyPrefix}{(shippingCost || 0).toLocaleString('en-US', {
-						minimumFractionDigits: 2
-					})}
-				</span>
-			</div>
+			<DetailRow label="Items">
+				{itemCount} {itemCount === 1 ? 'item' : 'items'}
+			</DetailRow>
+			<DetailRow label="Subtotal">
+				{formatCurrency(subtotal, currency)}
+			</DetailRow>
+			<DetailRow label="Shipping">
+				{formatCurrency(shippingCost || 0, currency)}
+			</DetailRow>
 			<div class="border-t border-surface-container-highest pt-4"></div>
-			<div class="flex justify-between text-on-surface-variant">
-				<span>Total</span>
-				<span class="font-headline text-3xl font-bold text-primary">
-					{currencyPrefix}{total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-				</span>
-			</div>
+			<DetailRow label="Total" highlight>
+				{formatCurrency(total, currency)}
+			</DetailRow>
 		</div>
-	</section>
+	</Card>
 
 	{#if error}
 		<p class="text-center font-body text-sm text-error">{error}</p>
 	{/if}
 
-	<!-- Actions -->
 	<div class="flex justify-end gap-4 pt-8">
-		<a
-			href={resolve('/orders')}
-			class="px-6 py-3 font-label text-on-surface-variant underline decoration-on-surface-variant underline-offset-4 transition-all hover:no-underline"
-		>
-			Cancel
-		</a>
-		<button
-			type="submit"
-			disabled={submitting}
-			class="cursor-pointer rounded-full bg-primary px-4 py-3 font-label text-sm text-on-primary transition-colors duration-300 hover:bg-primary-container hover:text-on-primary-container disabled:cursor-not-allowed disabled:opacity-50"
-		>
+		<Button href={resolve('/orders')} variant="tertiary">Cancel</Button>
+		<Button type="submit" variant="primary" disabled={submitting}>
 			{submitting ? 'Saving...' : isEdit ? 'Update Order' : 'Save Order'}
-		</button>
+		</Button>
 	</div>
 </form>

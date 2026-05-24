@@ -63,6 +63,12 @@
 	--font-display: 'Noto Serif', serif;
 	--font-body: 'Inter', sans-serif;
 	--font-label: 'Public Sans', sans-serif;
+
+	--shadow-ghost: inset 0 0 0 1px rgba(195, 198, 213, 0.15);
+	--shadow-ghost-focus: inset 0 0 0 2px var(--color-primary);
+	--shadow-card: 0 4px 24px rgba(27, 28, 29, 0.04);
+	--shadow-elevated: 0 4px 24px rgba(0, 0, 0, 0.02);
+	--shadow-dialog: 0 24px 80px rgba(0, 0, 0, 0.08);
 }
 
 .glass-panel {

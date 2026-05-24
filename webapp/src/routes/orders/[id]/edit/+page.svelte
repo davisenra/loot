@@ -3,6 +3,8 @@
 	import { resolve } from '$app/paths';
 	import { fetchOrder } from '$lib/data/orders';
 	import OrderForm from '$lib/components/OrderForm.svelte';
+	import PageHeader from '$lib/components/PageHeader.svelte';
+	import StateMessage from '$lib/components/StateMessage.svelte';
 	import { onMount } from 'svelte';
 	import type { OrdersRecord, OrderItemsRecord } from '$lib/types';
 
@@ -33,27 +35,10 @@
 </svelte:head>
 
 {#if loading}
-	<div class="py-20 text-center">
-		<p class="font-body text-on-surface-variant">Loading order...</p>
-	</div>
+	<StateMessage type="loading" message="Loading order..." />
 {:else if notFound || !order}
-	<div class="py-20 text-center">
-		<p class="font-body text-on-surface-variant">Order not found.</p>
-	</div>
+	<StateMessage type="error" message="Order not found." />
 {:else}
-	<header class="mb-16">
-		<a
-			href={resolve(`/orders/${order.id}`)}
-			class="group mb-6 inline-flex items-center gap-2 font-label text-sm text-on-surface-variant transition-colors hover:text-primary"
-		>
-			<span
-				class="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1"
-			>
-				arrow_back
-			</span>
-			Back to Order
-		</a>
-		<h2 class="font-headline text-6xl tracking-tight text-on-surface">Edit Order</h2>
-	</header>
+	<PageHeader backHref={resolve(`/orders/${order.id}`)} backLabel="Back to Order" title="Edit Order" />
 	<OrderForm {order} {items} {tagIds} {tagNames} />
 {/if}

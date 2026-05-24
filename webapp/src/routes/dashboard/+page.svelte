@@ -1,10 +1,12 @@
 <script lang="ts">
 	import StatusBadge from '$lib/components/StatusBadge.svelte';
+	import StateMessage from '$lib/components/StateMessage.svelte';
 	import { resolve } from '$app/paths';
 	import { type Status } from '$lib/status';
 	import { fetchSummary, fetchRecentOrders } from '$lib/data/orders';
 	import type { OrdersRecord } from '$lib/types';
 	import { onMount } from 'svelte';
+	import { formatDate } from '$lib/format';
 
 	interface SummaryCard {
 		label: string;
@@ -44,7 +46,7 @@
 					? 'bg-primary text-on-primary shadow-sm'
 					: card.label === 'In Transit'
 						? 'bg-surface-container'
-						: 'ghost-border bg-surface-container-lowest'} flex min-h-[200px] flex-col justify-between rounded-xl p-8"
+						: 'ghost-border bg-surface-container-lowest'} flex min-h-50 flex-col justify-between rounded-xl p-8"
 			>
 				<div class="mb-8 flex items-start justify-between">
 					<span
@@ -83,13 +85,9 @@
 		</div>
 
 		{#if loading}
-			<div class="py-20 text-center">
-				<p class="font-body text-on-surface-variant">Loading orders...</p>
-			</div>
+			<StateMessage type="loading" message="Loading orders..." />
 		{:else if recentOrders.length === 0}
-			<div class="py-20 text-center">
-				<p class="font-body text-on-surface-variant">No orders yet.</p>
-			</div>
+			<StateMessage type="empty" message="No orders yet." />
 		{:else}
 			<div class="flex flex-col gap-4">
 				{#each recentOrders as order (order.id)}
@@ -98,7 +96,7 @@
 						class="group ghost-border flex cursor-pointer items-center gap-6 rounded-xl bg-transparent p-4 transition-colors duration-300 hover:bg-surface-container-lowest"
 					>
 						<div
-							class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-surface-container-highest text-outline"
+							class="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-surface-container-highest text-outline"
 						>
 							<span class="material-symbols-outlined">package_2</span>
 						</div>
@@ -106,7 +104,7 @@
 							<div class="mb-1 flex items-baseline justify-between">
 								<h4 class="font-headline text-lg text-on-surface">{order.description}</h4>
 								<span class="font-label text-xs text-on-surface-variant">
-									{new Date(order.created).toLocaleDateString()}
+									{formatDate(order.created)}
 								</span>
 							</div>
 							<div class="flex items-center gap-4">

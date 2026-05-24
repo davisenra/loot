@@ -2,6 +2,7 @@
 	import { login, isAuthenticated } from '$lib/auth';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import Button from '$lib/components/Button.svelte';
 
 	let email = $state('');
 	let password = $state('');
@@ -76,13 +77,9 @@
 				/>
 			</div>
 
-			<button
-				type="submit"
-				disabled={loading}
-				class="w-full rounded-full bg-primary px-4 py-3 font-label text-sm text-on-primary transition-colors duration-300 hover:bg-primary-container hover:text-on-primary-container disabled:cursor-not-allowed disabled:opacity-50"
-			>
+			<Button type="submit" variant="primary" disabled={loading} class="w-full justify-center">
 				{loading ? 'Signing in...' : 'Sign in'}
-			</button>
+			</Button>
 		</form>
 	</div>
 </div>

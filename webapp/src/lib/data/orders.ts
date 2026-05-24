@@ -133,8 +133,38 @@ export async function updateOrder(
 	return order;
 }
 
+export async function archiveOrder(id: string): Promise<OrdersRecord | null> {
+	try {
+		return await pb.collection('orders').update<OrdersRecord>(id, {
+			status: 'archived',
+			archivedAt: new Date().toISOString()
+		});
+	} catch (err) {
+		console.error('Failed to archive order:', err);
+		return null;
+	}
+}
+
+export async function unarchiveOrder(id: string): Promise<OrdersRecord | null> {
+	try {
+		return await pb.collection('orders').update<OrdersRecord>(id, {
+			status: 'draft',
+			archivedAt: ''
+		});
+	} catch (err) {
+		console.error('Failed to unarchive order:', err);
+		return null;
+	}
+}
+
 export async function deleteOrder(id: string): Promise<boolean> {
 	try {
+		const items = await pb
+			.collection('orderItems')
+			.getFullList<OrderItemsRecord>({ filter: pb.filter('order = {:order}', { order: id }) });
+		for (const item of items) {
+			await pb.collection('orderItems').delete(item.id);
+		}
 		await pb.collection('orders').delete(id);
 		return true;
 	} catch (err) {

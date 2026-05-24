@@ -4,6 +4,7 @@
 	import { logout } from '$lib/auth';
 	import { goto } from '$app/navigation';
 	import pb from '$lib/pocketbase';
+	import Button from '$lib/components/Button.svelte';
 
 	const navItems = [
 		{ href: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
@@ -21,13 +22,10 @@
 		<h1 class="mb-1 font-headline text-xl text-on-surface">Loot</h1>
 	</div>
 
-	<a
-		href={resolve('/orders/new')}
-		class="mb-10 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 font-label text-sm text-on-primary transition-colors duration-300 hover:bg-primary-container hover:text-on-primary-container"
-	>
+	<Button href={resolve('/orders/new')} variant="primary" class="mb-10 w-full justify-center">
 		<span class="material-symbols-outlined text-lg">add</span>
 		New Order
-	</a>
+	</Button>
 
 	<div class="text-body-medium flex flex-1 flex-col gap-2 font-body">
 		{#each navItems as item (item.href)}
@@ -53,12 +51,9 @@
 				{(pb.authStore.record as Record<string, unknown>)?.email ?? 'User'}
 			</p>
 		</div>
-		<button
-			onclick={handleLogout}
-			class="flex w-full items-center gap-3 rounded-full px-4 py-3 text-on-secondary-fixed-variant transition-all duration-200 hover:bg-surface-container hover:text-primary"
-		>
+		<Button variant="tertiary" onclick={handleLogout}>
 			<span class="material-symbols-outlined">logout</span>
-			<span class="font-label text-sm">Sign out</span>
-		</button>
+			<span>Sign out</span>
+		</Button>
 	</div>
 </nav>
