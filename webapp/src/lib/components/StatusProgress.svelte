@@ -5,9 +5,10 @@
 
 	let currentIndex = $derived(statusPipeline.indexOf(status));
 	let isTerminal = $derived(status === 'archived' || status === 'returned');
+	let isDelivered = $derived(status === 'delivered');
 </script>
 
-<div class="flex items-center gap-0">
+<div class="flex w-full items-center">
 	{#if isTerminal}
 		<div class="flex items-center gap-3">
 			<div
@@ -33,7 +34,7 @@
 		</div>
 	{:else}
 		{#each statusPipeline as step, i (step)}
-			<div class="flex items-center">
+			<div class="flex flex-1 items-center {i === statusPipeline.length - 1 ? 'flex-none' : ''}">
 				<div class="flex flex-col items-center">
 					<div
 						class="flex h-8 w-8 items-center justify-center rounded-full transition-colors {i <
@@ -43,7 +44,7 @@
 								? 'bg-primary text-on-primary ring-2 ring-primary/30'
 								: 'bg-surface-container-high text-on-surface-variant'}"
 					>
-						{#if i < currentIndex}
+						{#if i < currentIndex || isDelivered}
 							<span class="material-symbols-outlined filled-icon text-sm">check</span>
 						{:else}
 							<span class="font-label text-xs">{i + 1}</span>
@@ -59,7 +60,7 @@
 				</div>
 				{#if i < statusPipeline.length - 1}
 					<div
-						class="mx-1 h-0.5 w-10 transition-colors {i < currentIndex
+						class="mx-2 h-0.5 flex-1 transition-colors {i < currentIndex
 							? 'bg-primary'
 							: 'bg-surface-container-highest'}"
 					></div>

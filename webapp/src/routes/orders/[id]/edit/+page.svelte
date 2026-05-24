@@ -42,7 +42,7 @@
 	<PageHeader
 		backHref={resolve(`/orders/${order.id}`)}
 		backLabel="Back to Order"
-		title="Edit Order"
+		title={`Edit - ${order?.description}`}
 	/>
 	<OrderForm {order} {items} {tagIds} {tagNames} />
 {/if}

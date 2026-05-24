@@ -56,25 +56,19 @@
 		</label>
 	{/if}
 	{#if isTextarea}
-		<textarea
-			{id}
-			bind:value
-			{placeholder}
-			{required}
-			class="{inputClasses} resize-y"
-			{rows}
-		></textarea>
+		<textarea {id} bind:value {placeholder} {required} class="{inputClasses} resize-y" {rows}>
+		</textarea>
 	{:else if prefix}
 		<div class="relative">
 			<span
-				class="absolute {size === 'compact' ? 'top-2.5 left-3' : 'top-3 left-4'} font-body {size ===
+				class="absolute {size === 'compact' ? 'top-2.5 left-3' : 'top-2 left-3'} font-body {size ===
 				'compact'
 					? 'text-sm'
 					: ''} text-on-surface-variant"
 			>
 				{prefix}
 			</span>
-			<input {id} {type} bind:value {placeholder} {required} class={inputClasses} />
+			<input {id} {type} step="any" bind:value {placeholder} {required} class={inputClasses} />
 		</div>
 	{:else}
 		<input {id} {type} bind:value {placeholder} {required} class={inputClasses} />

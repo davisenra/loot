@@ -64,15 +64,15 @@
 >
 	{#each selected as id, i (id)}
 		<span
-			class="flex items-center gap-1 rounded-full bg-surface-container-high px-3 py-1 font-label text-xs text-on-surface"
+			class="flex items-center gap-1 rounded-md bg-surface-container-high px-2 py-1 font-label text-xs text-on-surface"
 		>
 			{selectedNames[i] || id}
 			<button
 				type="button"
 				onclick={() => removeTag(id)}
-				class="text-on-surface-variant hover:text-error"
+				class=" cursor-pointer text-on-surface-variant hover:text-error"
 			>
-				<span class="material-symbols-outlined text-sm">close</span>
+				X
 			</button>
 		</span>
 	{/each}

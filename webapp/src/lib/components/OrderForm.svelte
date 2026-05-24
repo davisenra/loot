@@ -47,6 +47,10 @@
 	let currency = $state(order?.currency ?? 'BRL');
 	// svelte-ignore state_referenced_locally
 	let shippingCost = $state(order?.shippingCost ?? 0);
+	// svelte-ignore state_referenced_locally
+	let orderedAt = $state(order?.orderedAt ?? '');
+	// svelte-ignore state_referenced_locally
+	let deliveredAt = $state(order?.deliveredAt ?? '');
 
 	// svelte-ignore state_referenced_locally
 	let selectedTagIds = $state<string[]>([...initialTagIds]);
@@ -71,15 +75,14 @@
 	let itemCount = $derived(itemList.length);
 	let subtotal = $derived(itemList.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0));
 	let total = $derived(subtotal + (shippingCost || 0));
+	let orderedAtInputValue = $derived(
+		orderedAt ? new Date(orderedAt).toISOString().split('T')[0] : ''
+	);
+	let deliveredAtInputValue = $derived(
+		deliveredAt ? new Date(deliveredAt).toISOString().split('T')[0] : ''
+	);
 
-	const allStatuses: Status[] = [
-		'draft',
-		'ordered',
-		'inTransit',
-		'delivered',
-		'archived',
-		'returned'
-	];
+	const allStatuses: Status[] = ['draft', 'ordered', 'inTransit', 'delivered', 'returned'];
 
 	function addItem() {
 		itemList = [...itemList, { description: '', quantity: 1, unitPrice: 0, itemUrl: '' }];
@@ -96,7 +99,7 @@
 		try {
 			if (isEdit && order) {
 				const newItems = itemList
-					.filter((item, i) => {
+					.filter((_, i) => {
 						const existing = initialItems[i];
 						return !existing;
 					})
@@ -134,6 +137,8 @@
 						externalId,
 						trackingCode,
 						notes,
+						orderedAt,
+						deliveredAt,
 						currency,
 						totalPrice,
 						shippingCost,
@@ -142,35 +147,38 @@
 					newItems,
 					updatedItems
 				);
+
 				goto(resolve(`/orders/${result.id}`), { replaceState: true });
-			} else {
-				const result = await createOrder(
-					{
-						description,
-						store,
-						status,
-						orderUrl,
-						externalId,
-						trackingCode,
-						notes,
-						currency,
-						totalPrice,
-						shippingCost,
-						tags: selectedTagIds,
-						orderedAt: '',
-						deliveredAt: '',
-						archivedAt: ''
-					},
-					itemList.map((item) => ({
-						description: item.description,
-						quantity: item.quantity,
-						unitPrice: item.unitPrice,
-						itemUrl: item.itemUrl,
-						image: ''
-					}))
-				);
-				goto(resolve(`/orders/${result.id}`), { replaceState: true });
+				return;
 			}
+
+			const result = await createOrder(
+				{
+					description,
+					store,
+					status,
+					orderUrl,
+					externalId,
+					trackingCode,
+					notes,
+					currency,
+					totalPrice,
+					shippingCost,
+					orderedAt,
+					deliveredAt,
+					tags: selectedTagIds,
+					archivedAt: ''
+				},
+				itemList.map((item) => ({
+					description: item.description,
+					quantity: item.quantity,
+					unitPrice: item.unitPrice,
+					itemUrl: item.itemUrl,
+					image: ''
+				}))
+			);
+
+			goto(resolve(`/orders/${result.id}`), { replaceState: true });
 		} catch (err) {
 			console.error('Failed to save order:', err);
 			error = 'Failed to save order. Please try again.';
@@ -251,6 +259,38 @@
 				placeholder="0.00"
 				prefix="$"
 			/>
+
+			<div class="flex flex-col gap-2">
+				<label class="font-label font-medium text-on-surface-variant" for="orderedAt">
+					Ordered At
+				</label>
+				<input
+					class="w-full rounded border-none bg-surface-container-lowest font-body text-on-surface shadow-ghost transition-all focus:shadow-ghost-focus focus:outline-none"
+					type="date"
+					value={orderedAtInputValue}
+					oninput={(e) => {
+						const input = e.target as HTMLInputElement;
+						orderedAt = new Date(input.value).toISOString();
+					}}
+					id="orderedAt"
+				/>
+			</div>
+
+			<div class="flex flex-col gap-2">
+				<label class="font-label font-medium text-on-surface-variant" for="deliveredAt">
+					Delivered At
+				</label>
+				<input
+					class="w-full rounded border-none bg-surface-container-lowest font-body text-on-surface shadow-ghost transition-all focus:shadow-ghost-focus focus:outline-none"
+					type="date"
+					value={deliveredAtInputValue}
+					oninput={(e) => {
+						const input = e.target as HTMLInputElement;
+						deliveredAt = new Date(input.value).toISOString();
+					}}
+					id="deliveredAt"
+				/>
+			</div>
 
 			<div class="flex flex-col gap-2 md:col-span-2">
 				<TextField
