@@ -19,6 +19,7 @@ Features:
 
 - [X] Delete Orders
 - [X] Show status progress
+- [ ] Add financial stats to the dashboard
 
 Bugs/Issues:
 

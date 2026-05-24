@@ -1,0 +1,10 @@
+.git
+node_modules
+pocketbase/pb_data
+pocketbase/pocketbase
+webapp/.svelte-kit
+webapp/build
+webapp/.env
+webapp/node_modules
+.DS_Store
+*.md
