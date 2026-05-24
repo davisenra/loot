@@ -22,6 +22,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>Loot</title>
 </svelte:head>
 
 {#if $isAuthenticated && page.url.pathname !== resolve('/login')}

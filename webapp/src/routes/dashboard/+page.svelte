@@ -65,6 +65,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Dashboard — Loot</title>
+</svelte:head>
+
 <div>
 	<PageHeader title="Dashboard" />
 

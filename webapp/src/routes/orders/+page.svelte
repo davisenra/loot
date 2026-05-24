@@ -25,6 +25,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Orders — Loot</title>
+</svelte:head>
+
 <div>
 	<PageHeader title="Orders" />
 

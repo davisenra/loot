@@ -32,6 +32,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Login — Loot</title>
+</svelte:head>
+
 <div class="flex min-h-screen items-center justify-center bg-surface">
 	<div class="w-full max-w-md rounded-2xl bg-surface-container-lowest p-10 shadow-lg">
 		<div class="mb-10 text-center">

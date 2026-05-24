@@ -15,6 +15,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Wishlist — Loot</title>
+</svelte:head>
+
 <div>
 	<PageHeader title="Wishlist" />
 

@@ -64,6 +64,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Order Details — Loot</title>
+</svelte:head>
+
 {#if loading}
 	<StateMessage type="loading" message="Loading order..." />
 {:else if error || !order}

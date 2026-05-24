@@ -12,3 +12,7 @@
 		}
 	});
 </script>
+
+<svelte:head>
+	<title>Loot</title>
+</svelte:head>

@@ -48,6 +48,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Tags — Loot</title>
+</svelte:head>
+
 <div>
 	<PageHeader title="Tags" />
 
