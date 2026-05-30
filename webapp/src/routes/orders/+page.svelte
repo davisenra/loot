@@ -64,7 +64,7 @@
 		<SearchBar bind:value={searchQuery} placeholder="Search orders..." onsearch={onSearch} />
 	</div>
 
-	<nav class="mb-12 flex gap-6 border-b border-surface-dim">
+	<nav class="mb-12 flex scrollbar-none gap-4 overflow-x-auto border-b border-surface-dim md:gap-6">
 		<button
 			class="pb-4 font-label whitespace-nowrap {activeFilter === 'all'
 				? 'border-b-2 border-primary font-semibold text-primary'
@@ -93,7 +93,7 @@
 			message={totalItems === 0 ? 'No orders yet.' : 'No orders match your search.'}
 		/>
 	{:else}
-		<div class="grid grid-cols-2 gap-8">
+		<div class="grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
 			{#each orders as order (order.id)}
 				<OrderCard {order} />
 			{/each}

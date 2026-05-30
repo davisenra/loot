@@ -350,7 +350,9 @@
 	{/if}
 
 	<div class="flex justify-end gap-4 pt-8">
-		<Button href={resolve('/orders')} variant="tertiary">Cancel</Button>
+		<Button href={isEdit ? resolve(`/orders/${order?.id}`) : resolve('/orders')} variant="tertiary">
+			Cancel
+		</Button>
 		<Button type="submit" variant="primary" disabled={submitting}>
 			{submitting ? 'Saving...' : isEdit ? 'Update Order' : 'Save Order'}
 		</Button>

@@ -78,11 +78,13 @@
 	/>
 {:else}
 	<PageHeader backHref={resolve('/orders')} backLabel="Back to Orders">
-		<div class="grid grid-cols-12 gap-6">
-			<div class="col-span-8">
+		<div class="grid grid-cols-1 gap-6 md:grid-cols-12">
+			<div class="min-w-0 md:col-span-8">
 				<div>
-					<div class="mb-3 flex items-center gap-4">
-						<h2 class="font-headline text-6xl tracking-tight text-on-surface">
+					<div class="mb-3 flex flex-wrap items-center gap-4">
+						<h2
+							class="font-headline text-4xl tracking-tight wrap-break-word text-on-surface md:text-6xl"
+						>
 							{order.description}
 						</h2>
 						<StatusBadge status={order.status as Status} />
@@ -96,7 +98,7 @@
 						{order.store} &middot; Placed on {formatDate(order.orderedAt || order.created)}
 					</p>
 					{#if tags.length > 0}
-						<div class="mt-4 flex gap-2">
+						<div class="mt-4 flex flex-wrap gap-2">
 							{#each tags as tag (tag.id)}
 								<span
 									class="rounded-md bg-surface-container px-2 py-1 font-label text-xs text-on-surface-variant"
@@ -114,104 +116,31 @@
 				<div class="my-6">
 					<StatusProgress status={order.status as Status} />
 				</div>
-
-				<div class="flex flex-col space-y-16">
-					<section>
-						<h3
-							class="mb-8 border-b border-surface-container-highest pb-4 font-headline text-2xl text-on-surface"
-						>
-							Items
-						</h3>
-						{#if items.length === 0}
-							<StateMessage type="empty" message="No items in this order." />
-						{:else}
-							<div class="space-y-6">
-								{#each items as item, i (i)}
-									<article
-										class="flex cursor-default gap-6 rounded-2xl bg-surface-container-lowest p-6"
-									>
-										{#if item.image}
-											<img
-												src={pb.files.getURL(item, item.image)}
-												alt={item.description}
-												class="h-32 w-32 shrink-0 rounded-xl object-cover"
-											/>
-										{:else}
-											<div
-												class="flex h-32 w-32 shrink-0 items-center justify-center rounded-xl bg-surface-container text-outline"
-											>
-												<span class="material-symbols-outlined text-3xl opacity-50">
-													inventory_2
-												</span>
-											</div>
-										{/if}
-										<div class="flex flex-1 flex-col justify-between">
-											<div class="flex items-start justify-between gap-4">
-												<div>
-													<h4 class="font-headline text-xl text-on-surface">
-														{item.description}
-													</h4>
-												</div>
-												<div class="text-right">
-													<p class="font-label text-xs text-on-surface-variant">
-														Price: {formatCurrency(item.unitPrice, order.currency)}
-													</p>
-													<p class="mt-1 font-label text-xs text-on-surface-variant">
-														Qty: {item.quantity}
-													</p>
-												</div>
-											</div>
-											<div
-												class="mt-4 flex items-center justify-between border-t border-surface-container-highest pt-4"
-											>
-												{#if item.itemUrl}
-													<a
-														href={item.itemUrl}
-														target="_blank"
-														rel="noopener noreferrer"
-														class="inline-flex items-center gap-1 font-label text-sm text-primary"
-													>
-														<span class="material-symbols-outlined text-sm">open_in_new</span>
-														Item Link
-													</a>
-												{:else}
-													<span></span>
-												{/if}
-												<p class="font-headline text-lg font-semibold text-on-surface">
-													{formatCurrency(lineTotal(item), order.currency)}
-												</p>
-											</div>
-										</div>
-									</article>
-								{/each}
-							</div>
-						{/if}
-					</section>
-				</div>
 			</div>
-			<div class="col-span-4 flex flex-col gap-8">
-				<div class="flex items-center gap-3">
+
+			<div class="min-w-0 md:col-span-4 md:row-span-2">
+				<div class="flex flex-wrap gap-2">
 					<Button href={resolve(`/orders/${order.id}/edit`)} variant="secondary">
-						<span class="material-symbols-outlined text-lg">edit</span>
+						<span class="material-symbols-outlined text-[20px]!">edit</span>
 						Edit
 					</Button>
 					{#if order.status === 'archived'}
 						<Button variant="secondary" onclick={handleUnarchive}>
-							<span class="material-symbols-outlined text-lg">unarchive</span>
+							<span class="material-symbols-outlined text-[20px]!">unarchive</span>
 							Unarchive
 						</Button>
 					{:else}
 						<Button variant="secondary" onclick={handleArchive}>
-							<span class="material-symbols-outlined text-lg">archive</span>
+							<span class="material-symbols-outlined text-[20px]!">archive</span>
 							Archive
 						</Button>
 					{/if}
 					<Button variant="danger" onclick={() => (showDeleteDialog = true)}>
-						<span class="material-symbols-outlined text-lg">delete</span>
+						<span class="material-symbols-outlined text-[20px]!">delete</span>
 						Delete
 					</Button>
 				</div>
-				<div class="col-span-4 space-y-8">
+				<div class="mt-8 space-y-8">
 					<Card variant="elevated">
 						<h3 class="mb-6 font-headline text-xl text-on-surface">Total</h3>
 						<div class="space-y-4 font-body text-sm">
@@ -267,6 +196,78 @@
 						</div>
 					</Card>
 				</div>
+			</div>
+
+			<div class="min-w-0 md:col-span-8">
+				<section>
+					<h3
+						class="mb-8 border-b border-surface-container-highest pb-4 font-headline text-2xl text-on-surface"
+					>
+						Items
+					</h3>
+					{#if items.length === 0}
+						<StateMessage type="empty" message="No items in this order." />
+					{:else}
+						<div class="space-y-6">
+							{#each items as item, i (i)}
+								<article
+									class="flex min-w-0 cursor-default flex-col gap-4 rounded-2xl bg-surface-container-lowest p-4 sm:flex-row sm:gap-6 sm:p-6"
+								>
+									{#if item.image}
+										<img
+											src={pb.files.getURL(item, item.image)}
+											alt={item.description}
+											class="h-24 w-24 shrink-0 self-start rounded-xl object-cover sm:h-32 sm:w-32"
+										/>
+									{:else}
+										<div
+											class="flex h-24 w-24 shrink-0 items-center justify-center rounded-xl bg-surface-container text-outline sm:h-32 sm:w-32"
+										>
+											<span class="material-symbols-outlined text-3xl opacity-50">inventory_2</span>
+										</div>
+									{/if}
+									<div class="flex min-w-0 flex-1 flex-col justify-between">
+										<div class="flex items-start justify-between gap-4">
+											<div>
+												<h4 class="font-headline text-xl text-on-surface">
+													{item.description}
+												</h4>
+											</div>
+											<div class="text-right">
+												<p class="font-label text-xs text-on-surface-variant">
+													Price: {formatCurrency(item.unitPrice, order.currency)}
+												</p>
+												<p class="mt-1 font-label text-xs text-on-surface-variant">
+													Qty: {item.quantity}
+												</p>
+											</div>
+										</div>
+										<div
+											class="mt-4 flex items-center justify-between border-t border-surface-container-highest pt-4"
+										>
+											{#if item.itemUrl}
+												<a
+													href={item.itemUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="inline-flex items-center gap-1 font-label text-sm text-primary"
+												>
+													<span class="material-symbols-outlined text-sm">open_in_new</span>
+													Item Link
+												</a>
+											{:else}
+												<span></span>
+											{/if}
+											<p class="font-headline text-lg font-semibold text-on-surface">
+												{formatCurrency(lineTotal(item), order.currency)}
+											</p>
+										</div>
+									</div>
+								</article>
+							{/each}
+						</div>
+					{/if}
+				</section>
 			</div>
 		</div>
 	</PageHeader>

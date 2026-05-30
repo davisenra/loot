@@ -6,6 +6,8 @@
 	import pb from '$lib/pocketbase';
 	import Button from '$lib/components/Button.svelte';
 
+	let { sidebarOpen = false, onclose }: { sidebarOpen?: boolean; onclose: () => void } = $props();
+
 	const navItems = [
 		{ href: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
 		{ href: '/orders', icon: 'package_2', label: 'Orders' },
@@ -19,15 +21,31 @@
 	}
 </script>
 
-<nav class="fixed top-0 left-0 z-40 flex h-screen w-64 flex-col bg-surface-container-low p-6">
-	<div class="mb-12">
+<nav
+	class="fixed top-0 left-0 z-50 flex h-dvh w-64 flex-col overflow-y-auto bg-surface-container-low p-4 transition-transform duration-300 md:translate-x-0 md:p-6 {sidebarOpen
+		? 'translate-x-0'
+		: '-translate-x-full'}"
+>
+	<button
+		onclick={onclose}
+		class="mb-2 flex items-center justify-center self-end rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-container md:hidden"
+		aria-label="Close sidebar"
+	>
+		<span class="material-symbols-outlined">close</span>
+	</button>
+
+	<div class="mb-6 md:mb-12">
 		<h1 class="mb-1 font-headline text-2xl font-bold text-on-surface">Loot</h1>
 		<p class="font-label text-sm text-on-surface-variant">
 			{(pb.authStore.record as Record<string, unknown>)?.email ?? 'User'}
 		</p>
 	</div>
 
-	<Button href={resolve('/orders/new')} variant="primary" class="mb-10 w-full justify-center">
+	<Button
+		href={resolve('/orders/new')}
+		variant="primary"
+		class="mb-6 w-full justify-center md:mb-10"
+	>
 		<span class="material-symbols-outlined text-lg">add</span>
 		New Order
 	</Button>

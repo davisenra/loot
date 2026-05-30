@@ -60,7 +60,7 @@
 	{:else if tags.length === 0}
 		<StateMessage type="empty" message="No tags yet." />
 	{:else}
-		<div class="flex gap-2">
+		<div class="flex flex-wrap gap-2">
 			{#each tags as tag (tag.id)}
 				{@const count = orderCounts.get(tag.id) ?? 0}
 				<div

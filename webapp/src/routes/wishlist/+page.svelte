@@ -28,7 +28,7 @@
 	{:else if orders.length === 0}
 		<StateMessage type="empty" message="No drafts yet." />
 	{:else}
-		<div class="grid grid-cols-2 gap-8">
+		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
 			{#each orders as order (order.id)}
 				<OrderCard {order} />
 			{/each}

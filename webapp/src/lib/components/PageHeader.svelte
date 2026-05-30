@@ -12,7 +12,7 @@
 	} = $props();
 </script>
 
-<header class="mb-16">
+<header class="mb-8 md:mb-16">
 	{#if backHref && backLabel}
 		<a
 			href={backHref}
@@ -29,6 +29,6 @@
 	{#if children}
 		{@render children()}
 	{:else if title}
-		<h2 class="font-headline text-6xl tracking-tight text-on-surface">{title}</h2>
+		<h2 class="font-headline text-4xl tracking-tight text-on-surface md:text-6xl">{title}</h2>
 	{/if}
 </header>

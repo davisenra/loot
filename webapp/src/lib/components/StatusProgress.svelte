@@ -8,7 +8,7 @@
 	let isDelivered = $derived(status === 'delivered');
 </script>
 
-<div class="flex w-full items-center">
+<div class="flex w-full max-w-xl items-center">
 	{#if isTerminal}
 		<div class="flex items-center gap-3">
 			<div
@@ -34,10 +34,12 @@
 		</div>
 	{:else}
 		{#each statusPipeline as step, i (step)}
-			<div class="flex flex-1 items-center {i === statusPipeline.length - 1 ? 'flex-none' : ''}">
+			<div
+				class="flex min-w-0 items-center {i === statusPipeline.length - 1 ? 'flex-none' : 'flex-1'}"
+			>
 				<div class="flex flex-col items-center">
 					<div
-						class="flex h-8 w-8 items-center justify-center rounded-full transition-colors {i <
+						class="flex h-7 w-7 items-center justify-center rounded-full transition-colors md:h-8 md:w-8 {i <
 						currentIndex
 							? 'bg-primary text-on-primary'
 							: i === currentIndex
@@ -60,7 +62,7 @@
 				</div>
 				{#if i < statusPipeline.length - 1}
 					<div
-						class="mx-2 h-0.5 flex-1 transition-colors {i < currentIndex
+						class="mx-1 h-0.5 flex-1 transition-colors md:mx-2 {i < currentIndex
 							? 'bg-primary'
 							: 'bg-surface-container-highest'}"
 					></div>

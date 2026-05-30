@@ -72,16 +72,16 @@
 <div>
 	<PageHeader title="Dashboard" />
 
-	<section class="mb-20 grid grid-cols-3 gap-6">
+	<section class="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:mb-20 lg:grid-cols-3">
 		{#each summaryCards as card (card.label)}
 			<div
-				class="{card.label === 'Delivered'
+				class="min-w-0 {card.label === 'Delivered'
 					? 'bg-primary text-on-primary shadow-sm'
 					: card.label === 'In Transit'
 						? 'bg-surface-container'
-						: 'ghost-border bg-surface-container-lowest'} flex min-h-50 flex-col justify-between rounded-xl p-8"
+						: 'ghost-border bg-surface-container-lowest'} flex min-h-36 flex-col justify-between rounded-xl p-5 md:min-h-50 md:p-8"
 			>
-				<div class="mb-8 flex items-start justify-between">
+				<div class="mb-4 flex items-start justify-between md:mb-8">
 					<span
 						class="font-label text-sm tracking-widest uppercase {card.label === 'Delivered'
 							? 'opacity-80'
@@ -101,7 +101,7 @@
 				</div>
 				<div>
 					<div
-						class="mb-2 font-headline text-5xl {card.label === 'Delivered'
+						class="mb-2 font-headline text-4xl md:text-5xl {card.label === 'Delivered'
 							? ''
 							: 'text-on-surface'}"
 					>
@@ -111,9 +111,9 @@
 			</div>
 		{/each}
 		<div
-			class="ghost-border flex min-h-50 flex-col justify-between rounded-xl bg-surface-container-lowest p-8"
+			class="ghost-border flex min-h-36 min-w-0 flex-col justify-between rounded-xl bg-surface-container-lowest p-5 md:min-h-50 md:p-8"
 		>
-			<div class="mb-8 flex items-start justify-between">
+			<div class="mb-4 flex items-start justify-between md:mb-8">
 				<span class="font-label text-sm tracking-widest text-on-surface-variant uppercase">
 					{draftCard.label}
 				</span>
@@ -122,16 +122,16 @@
 				</span>
 			</div>
 			<div>
-				<div class="mb-2 font-headline text-5xl text-on-surface">
+				<div class="mb-2 font-headline text-4xl text-on-surface md:text-5xl">
 					{loading ? '—' : String(draftCard.count).padStart(2, '0')}
 				</div>
 			</div>
 		</div>
 		{#each financialCards as card (card.label)}
 			<div
-				class="ghost-border flex min-h-50 flex-col justify-between rounded-xl bg-surface-container-lowest p-8"
+				class="ghost-border flex min-h-36 min-w-0 flex-col justify-between rounded-xl bg-surface-container-lowest p-5 md:min-h-50 md:p-8"
 			>
-				<div class="mb-8 flex items-start justify-between">
+				<div class="mb-4 flex items-start justify-between md:mb-8">
 					<span class="font-label text-sm tracking-widest text-on-surface-variant uppercase">
 						{card.label}
 					</span>
@@ -140,7 +140,7 @@
 					</span>
 				</div>
 				<div>
-					<div class="mb-2 font-headline text-5xl text-on-surface">
+					<div class="mb-2 font-headline text-4xl text-on-surface md:text-5xl">
 						{loading ? '—' : formatCurrency(card.value)}
 					</div>
 				</div>
@@ -162,28 +162,28 @@
 				{#each recentOrders as order (order.id)}
 					<a
 						href={resolve(`/orders/${order.id}`)}
-						class="group ghost-border flex cursor-pointer items-center gap-6 rounded-xl bg-transparent p-4 transition-colors duration-300 hover:bg-surface-container-lowest"
+						class="group ghost-border flex cursor-pointer items-center gap-4 rounded-xl bg-surface-container-lowest p-4 transition-colors duration-300 md:gap-6"
 					>
 						<div
-							class="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-surface-container-highest text-outline"
+							class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-surface-container-highest text-outline md:h-16 md:w-16"
 						>
 							<span class="material-symbols-outlined">package_2</span>
 						</div>
-						<div class="flex-1">
-							<div class="mb-1 flex items-baseline justify-between">
-								<h4 class="font-headline text-lg text-on-surface">{order.description}</h4>
+						<div class="min-w-0 flex-1">
+							<div class="mb-1 flex items-baseline justify-between gap-2">
+								<h4 class="truncate font-headline text-lg text-on-surface">{order.description}</h4>
+								<StatusBadge status={order.status as Status} />
+							</div>
+							<div class="flex flex-wrap items-center gap-2 md:gap-4">
+								<span class="font-label text-xs text-on-surface-variant">{order.store}</span>
+								<span class="h-1 w-1 rounded-full bg-surface-dim"></span>
+								<span class="font-label text-xs text-on-surface-variant">
+									{formatCurrency(order.totalPrice, order.currency)}
+								</span>
+								<span class="h-1 w-1 rounded-full bg-surface-dim"></span>
 								<span class="font-label text-xs text-on-surface-variant">
 									{formatDate(order.created)}
 								</span>
-							</div>
-							<div class="flex items-center gap-4">
-								<span class="font-label text-xs tracking-wider text-on-surface-variant uppercase">
-									{order.externalId}
-								</span>
-								<span class="h-1 w-1 rounded-full bg-surface-dim"></span>
-								<span class="font-label text-xs text-on-surface-variant">{order.store}</span>
-								<span class="h-1 w-1 rounded-full bg-surface-dim"></span>
-								<StatusBadge status={order.status as Status} />
 							</div>
 						</div>
 					</a>
