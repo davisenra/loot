@@ -18,6 +18,6 @@ export const statusLabels: Record<Status, string> = {
 	returned: 'Returned'
 };
 
-export const filterableStatuses: Status[] = ['ordered', 'inTransit', 'delivered'];
+export const filterableStatuses: Status[] = ['ordered', 'inTransit', 'delivered', 'archived'];
 
 export const statusPipeline: Status[] = ['draft', 'ordered', 'inTransit', 'delivered'];

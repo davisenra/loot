@@ -2,18 +2,46 @@ import pb from '$lib/pocketbase';
 import type { OrdersRecord, OrderItemsRecord, TagsRecord, OrderSummary } from '$lib/types';
 import type { Status } from '$lib/status';
 
-export async function fetchOrders(filter?: Status): Promise<OrdersRecord[]> {
+export type PaginatedResult<T> = {
+	items: T[];
+	totalItems: number;
+	totalPages: number;
+	page: number;
+};
+
+export type FetchOrdersOptions = {
+	page?: number;
+	perPage?: number;
+	status?: Status | 'all';
+	search?: string;
+};
+
+export async function fetchOrders(
+	options: FetchOrdersOptions = {}
+): Promise<PaginatedResult<OrdersRecord>> {
+	const { page = 1, perPage = 10, status = 'all', search } = options;
 	try {
-		const options: Record<string, string> = {
-			sort: '-created'
-		};
-		if (filter) {
-			options.filter = pb.filter('status = {:status}', { status: filter });
+		const filters: string[] = [];
+		if (status !== 'all') {
+			filters.push(pb.filter('status = {:status}', { status }));
 		}
-		return await pb.collection('orders').getFullList<OrdersRecord>(options);
+		if (search && search.trim()) {
+			filters.push(pb.filter('description ~ {:search}', { search: search.trim() }));
+		}
+		const filterStr = filters.length > 0 ? filters.join(' && ') : '';
+		const result = await pb.collection('orders').getList<OrdersRecord>(page, perPage, {
+			sort: '-created',
+			...(filterStr && { filter: filterStr })
+		});
+		return {
+			items: result.items,
+			totalItems: result.totalItems,
+			totalPages: result.totalPages,
+			page: result.page
+		};
 	} catch (err) {
 		console.error('Failed to fetch orders:', err);
-		return [];
+		return { items: [], totalItems: 0, totalPages: 0, page: 1 };
 	}
 }
 

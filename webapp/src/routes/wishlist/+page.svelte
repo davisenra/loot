@@ -10,7 +10,8 @@
 	let loading = $state(true);
 
 	onMount(async () => {
-		orders = await fetchOrders('draft');
+		const result = await fetchOrders({ status: 'draft' });
+		orders = result.items;
 		loading = false;
 	});
 </script>

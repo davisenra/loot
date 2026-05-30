@@ -32,6 +32,12 @@ tasks:
       - pnpm lint
       - pnpm check
 
+  format:
+    desc: Format webapp
+    dir: webapp
+    cmds:
+      - pnpm format
+
   build:
     desc: Builds the Docker image
     cmds:
