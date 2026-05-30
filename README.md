@@ -23,9 +23,16 @@ A Docker image that bundles the project into a single container is available.
 docker run -d \
   --name loot:latest \
   -p 80:80 \
+  -e APP_URL=https://your-domain.com \
   -v loot-data:/storage \
   loot:latest
 ```
+
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `APP_URL` | no | Public URL of your Loot instance.
 
 ### Volumes
 
